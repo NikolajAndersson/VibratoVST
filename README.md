@@ -1,2 +1,2 @@
 # VibratoVST
-Vibrato VST implemented in JUCe
+Vibrato VST implemented in JUCE.
