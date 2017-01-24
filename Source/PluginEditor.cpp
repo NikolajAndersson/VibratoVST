@@ -32,7 +32,7 @@ void VibratoAudioProcessorEditor::paint (Graphics& g)
 
     g.setColour (Colours::black);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
+    g.drawFittedText ("Vibrato\nMade by Nikolaj Andersson", getLocalBounds(), Justification::centred, 1);
 }
 
 void VibratoAudioProcessorEditor::resized()

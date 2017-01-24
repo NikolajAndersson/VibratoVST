@@ -33,7 +33,7 @@ VibratoAudioProcessor::VibratoAudioProcessor()
     addParameter (depth = new AudioParameterFloat ("depth","Depth",0.0f,50.0f,0.5f));
     addParameter (mix = new AudioParameterFloat ("mix","Dry/Wet",0.0f,1.0f,0.5f));
     for (int i = 0; i<2; i++){
-        for (int j = 0; j<192001; j++){
+        for (int j = 0; j<bufferLength; j++){
             vBuffer[i][j] = 0.0f;
         }
     }
@@ -101,6 +101,12 @@ void VibratoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    currentSampleRate = sampleRate;
+    lfofreq = *rate;
+    //M = lfofreq/currentSampleRate;
+    currentAngle = 0;
+    //deltaAngle = 0;
+    updateAngle();
 }
 
 void VibratoAudioProcessor::releaseResources()
@@ -132,26 +138,14 @@ bool VibratoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
   #endif
 }
 #endif
-
+void VibratoAudioProcessor::updateAngle(){
+        const double cyclesPerSample = lfofreq / currentSampleRate; // [2]
+        deltaAngle = cyclesPerSample * 2.0 * double_Pi;                           
+}
 void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
-    
-    int numSamples = buffer.getNumSamples();
-    float depthCopy = *depth;
-    float delay = *depth;
-    float rateCopy = *rate;
-    float wet = *mix;
-    float dry = 1-wet;
-    float M = 0;
-    if (getSampleRate() > 0) {
-        M = rateCopy/getSampleRate();
-    } else {
-        M = rateCopy/44100.0f;
-    }
-    
-    //AudioSampleBuffer bufferCopy = buffer;
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -160,10 +154,23 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
     // this code if your algorithm always overwrites all the output channels.
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
+    
+    int numSamples = buffer.getNumSamples();
+    float depthCopy = *depth;
+    float delay = *depth;
+    float wet = *mix;
+    float dry = 1-wet;
+    if (*rate != lfofreq){
+        lfofreq = *rate;
+        updateAngle();
+    }
+   // M = lfofreq/currentSampleRate;
+   // Should check for sampling rate
+   /* if (getSampleRate() != currentSampleRate)
+        currentSampleRate = buffer.getSampleRate;*/    
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-        
+// Still need:
+// Sample drop, Smooth out frequency slider, GUI?  
          
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {               
@@ -172,17 +179,23 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
             for (int i = 0; i < numSamples; i++)
             {
                 vBuffer[channel][w] = channelData[i];
-                float modfreq = std::sin(2*M_PI*M*w);
-                int tap = int(1+delay+depthCopy*modfreq);
-                int rindex = int(w - tap);
-                if (rindex < 0)
-                    rindex = rindex + 192001;
-                    
-                channelData[i] = channelData[i]*dry + wet*vBuffer[channel][rindex];
+                float modfreq = (float) std::sin(deltaAngle*w);
+                //currentAngle += deltaAngle;
+                float tap = 1+delay+depthCopy*modfreq;
+                int n = int(tap); 
+                float frac = float(tap - n);
+                
+                int rindex = int(w - n);             
+                if (rindex < 0){
+                    rindex = rindex + (bufferLength);
+                }
+                
+                float sample = vBuffer[channel][rindex-1]*frac + (1-frac)*vBuffer[channel][rindex];    
+                channelData[i] = channelData[i]*dry + wet*sample;
                 
                 w++;
-                if (w > 192000)
-                    w =  1;
+                if (w > bufferLength-1)
+                    w =  0;
             
             }
             writeIndex[channel] = w;
@@ -219,6 +232,7 @@ void VibratoAudioProcessor::setStateInformation (const void* data, int sizeInByt
     *rate = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
     *depth = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
     *mix = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
+         
 }
 
 //==============================================================================

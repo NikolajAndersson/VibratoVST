@@ -55,19 +55,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CA30F8CC1E30095200C57AF9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5942BCF034C0CB5E240AB61B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 95A09A90039C44E2DA834E59;
-			remoteInfo = "Vibrato (VST)";
-		};
-		CA30F8CD1E30095200C57AF9 /* PBXContainerItemProxy */ = {
+		CA8837031E37E5D100769918 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5942BCF034C0CB5E240AB61B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F707E4DC4BDFA8BB1EDC6E90;
 			remoteInfo = "Vibrato (Shared Code)";
+		};
+		CA8837041E37E5D200769918 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5942BCF034C0CB5E240AB61B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 95A09A90039C44E2DA834E59;
+			remoteInfo = "Vibrato (VST)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -3793,12 +3793,12 @@
 		4C1179CFE03F87CFDBD44C4E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F707E4DC4BDFA8BB1EDC6E90 /* Vibrato (Shared Code) */;
-			targetProxy = CA30F8CD1E30095200C57AF9 /* PBXContainerItemProxy */;
+			targetProxy = CA8837031E37E5D100769918 /* PBXContainerItemProxy */;
 		};
 		E73C5D7575EBCC1E6BC5102E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 95A09A90039C44E2DA834E59 /* Vibrato (VST) */;
-			targetProxy = CA30F8CC1E30095200C57AF9 /* PBXContainerItemProxy */;
+			targetProxy = CA8837041E37E5D200769918 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3821,6 +3821,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Vibrato;
+				SDKROOT = macosx10.10;
 				WARNING_CFLAGS = "-Wreorder";
 				ZERO_LINK = NO;
 			};
@@ -3869,6 +3870,7 @@
 		1A4310D3EFEB168B5532AD5A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = macosx10.10;
 			};
 			name = Release;
 		};
@@ -3889,6 +3891,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Vibrato;
+				SDKROOT = macosx10.10;
 				WARNING_CFLAGS = "-Wreorder";
 				ZERO_LINK = NO;
 			};
@@ -3897,6 +3900,7 @@
 		8DD42E61179884568193EED9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -3937,6 +3941,7 @@
 					"-lVibrato",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.Vibrato;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 				WRAPPER_EXTENSION = vst;
 			};
@@ -3945,6 +3950,7 @@
 		A1149A2EF4B984B1BE546653 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = macosx10.10;
 			};
 			name = Debug;
 		};
@@ -3990,6 +3996,7 @@
 		C90ADB85A60F0958D190E4C2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -4031,6 +4038,7 @@
 					"-lVibrato",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.Vibrato;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 				WRAPPER_EXTENSION = vst;
 			};
