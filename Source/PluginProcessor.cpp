@@ -28,9 +28,9 @@ VibratoAudioProcessor::VibratoAudioProcessor()
     addParameter (rate = new AudioParameterFloat ("rate", // parameterID,
                                                   "Rate (Hz)", // parameter name
                                                   0.0f,   // minimum value
-                                                  50.0f,   // maximum value
+                                                  14.0f,   // maximum value
                                                   1.0f));    // default value
-    addParameter (depth = new AudioParameterFloat ("depth","Depth",0.0f,50.0f,0.5f));
+    addParameter (depth = new AudioParameterFloat ("depth","Depth",0.00001f,0.001f,0.0001f));
     addParameter (mix = new AudioParameterFloat ("mix","Dry/Wet",0.0f,1.0f,0.5f));
     for (int i = 0; i<2; i++){
         for (int j = 0; j<bufferLength; j++){
@@ -104,9 +104,9 @@ void VibratoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     currentSampleRate = sampleRate;
     lfofreq = *rate;
     //M = lfofreq/currentSampleRate;
-    currentAngle = 0;
+    phase = 0;
     //deltaAngle = 0;
-    updateAngle();
+    updateAngle(lfofreq);
 }
 
 void VibratoAudioProcessor::releaseResources()
@@ -138,9 +138,11 @@ bool VibratoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
   #endif
 }
 #endif
-void VibratoAudioProcessor::updateAngle(){
-        const double cyclesPerSample = lfofreq / currentSampleRate; // [2]
-        deltaAngle = cyclesPerSample * 2.0 * double_Pi;                           
+float VibratoAudioProcessor::updateAngle(float lfofreq){
+    //  phase = phase + ((2 * pi * f) / samplerate)
+        //const double cyclesPerSample = lfofreq / currentSampleRate; // [2]
+    deltaAngle =  2 * pi * (lfofreq / currentSampleRate);
+    return deltaAngle;
 }
 void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
@@ -156,13 +158,13 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
         buffer.clear (i, 0, buffer.getNumSamples());
     
     int numSamples = buffer.getNumSamples();
-    float depthCopy = *depth;
-    float delay = *depth;
+    float depthCopy = round(*depth*currentSampleRate);
+    float delay = round(*depth*currentSampleRate);
     float wet = *mix;
     float dry = 1-wet;
     if (*rate != lfofreq){
         lfofreq = *rate;
-        updateAngle();
+        deltaAngle = updateAngle(lfofreq);
     }
    // M = lfofreq/currentSampleRate;
    // Should check for sampling rate
@@ -179,24 +181,36 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
             for (int i = 0; i < numSamples; i++)
             {
                 vBuffer[channel][w] = channelData[i];
-                float modfreq = (float) std::sin(deltaAngle*w);
-                //currentAngle += deltaAngle;
-                float tap = 1+delay+depthCopy*modfreq;
-                int n = int(tap); 
-                float frac = float(tap - n);
                 
-                int rindex = int(w - n);             
-                if (rindex < 0){
-                    rindex = rindex + (bufferLength);
+                float modfreq = std::sin(phase);
+                
+                phase = phase + deltaAngle;
+                if(phase > pi * 2){
+                    phase = phase - (2 * pi);
                 }
                 
-                float sample = vBuffer[channel][rindex-1]*frac + (1-frac)*vBuffer[channel][rindex];    
-                channelData[i] = channelData[i]*dry + wet*sample;
+                float tap = 1 + delay + depthCopy * modfreq;
+                int n = floor(tap);
+                float frac = tap - n;
+                
+                int rindex = floor(w - n);
+                if (rindex < 0){
+                    rindex = rindex + bufferLength;
+                }
+                float sample = 0;
+                
+                if(rindex == 0){
+                    sample = vBuffer[channel][bufferLength-1]*frac + (1-frac)*vBuffer[channel][rindex];
+                }
+                else{
+                    sample = vBuffer[channel][rindex-1]*frac + (1-frac)*vBuffer[channel][rindex];
+                }
                 
                 w++;
-                if (w > bufferLength-1)
+                if (w == bufferLength)
                     w =  0;
-            
+                
+                channelData[i] = dry*channelData[i] + wet*sample;
             }
             writeIndex[channel] = w;
     }

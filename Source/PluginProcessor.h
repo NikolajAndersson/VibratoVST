@@ -20,7 +20,7 @@
 class VibratoAudioProcessor  : public AudioProcessor
 {
 public:
-    double currentSampleRate, currentAngle, deltaAngle, lfofreq;
+    double currentSampleRate, phase, deltaAngle, lfofreq;
 
     //==============================================================================
     VibratoAudioProcessor();
@@ -33,7 +33,7 @@ public:
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
-    void updateAngle();
+    float updateAngle(float lfofreq);
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
 
     //==============================================================================
@@ -59,11 +59,14 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    int writeIndex[2] = {0,0}; 
-    //int sineindex = 0;
+    enum{
+        bufferLength = 192001
+    };
+    int writeIndex[2] = {0,0};
+    double pi = 3.14159265358;
+    int sineindex = 0;
     //double M = 0;
-    const int bufferLength = 192001;
-    float vBuffer[2][192001];
+    float vBuffer[2][bufferLength];
     AudioParameterFloat* rate;
     AudioParameterFloat* depth;
     AudioParameterFloat* mix;

@@ -8,7 +8,7 @@
               pluginIsSynth="0" pluginWantsMidiIn="0" pluginProducesMidiOut="0"
               pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0" pluginAUExportPrefix="VibratoAU"
               pluginRTASCategory="" aaxIdentifier="com.yourcompany.Vibrato"
-              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.3.0">
+              pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="4.3.1">
   <MAINGROUP id="Mw6TWf" name="Vibrato">
     <GROUP id="{B9DC709C-0878-71CF-02FC-703C8038731B}" name="Source">
       <FILE id="jRzPtI" name="PluginProcessor.cpp" compile="1" resource="0"
