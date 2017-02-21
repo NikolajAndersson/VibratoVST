@@ -20,7 +20,7 @@
 class VibratoAudioProcessor  : public AudioProcessor
 {
 public:
-    double currentSampleRate, phase, deltaAngle, lfofreq;
+    
 
     //==============================================================================
     VibratoAudioProcessor();
@@ -62,8 +62,9 @@ private:
     enum{
         bufferLength = 192001
     };
+    double currentSampleRate, deltaAngle, lfofreq;
     int writeIndex[2] = {0,0};
-    double pi = 3.14159265358;
+    float phase[2] = {0,0};
     int sineindex = 0;
     //double M = 0;
     float vBuffer[2][bufferLength];

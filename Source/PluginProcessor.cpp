@@ -103,10 +103,7 @@ void VibratoAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     // initialisation that you need..
     currentSampleRate = sampleRate;
     lfofreq = *rate;
-    //M = lfofreq/currentSampleRate;
-    phase = 0;
-    //deltaAngle = 0;
-    updateAngle(lfofreq);
+    deltaAngle = updateAngle(lfofreq);
 }
 
 void VibratoAudioProcessor::releaseResources()
@@ -141,7 +138,7 @@ bool VibratoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 float VibratoAudioProcessor::updateAngle(float lfofreq){
     //  phase = phase + ((2 * pi * f) / samplerate)
         //const double cyclesPerSample = lfofreq / currentSampleRate; // [2]
-    deltaAngle =  2 * pi * (lfofreq / currentSampleRate);
+    deltaAngle =  2 * float_Pi * (lfofreq / currentSampleRate);
     return deltaAngle;
 }
 void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
@@ -166,27 +163,24 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
         lfofreq = *rate;
         deltaAngle = updateAngle(lfofreq);
     }
-   // M = lfofreq/currentSampleRate;
-   // Should check for sampling rate
-   /* if (getSampleRate() != currentSampleRate)
-        currentSampleRate = buffer.getSampleRate;*/    
 
 // Still need:
-// Sample drop, Smooth out frequency slider, GUI?  
+// Save old presets, Smooth out frequency slider, GUI?
          
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {               
             int w = writeIndex[channel];
-            float* channelData = buffer.getWritePointer (channel); 
+            float* channelData = buffer.getWritePointer (channel);
+            
             for (int i = 0; i < numSamples; i++)
             {
                 vBuffer[channel][w] = channelData[i];
                 
-                float modfreq = std::sin(phase);
+                double modfreq = sin(phase[channel]);
                 
-                phase = phase + deltaAngle;
-                if(phase > pi * 2){
-                    phase = phase - (2 * pi);
+                phase[channel] = phase[channel] + deltaAngle;
+                if(phase[channel] > float_Pi * 2){
+                    phase[channel] = phase[channel] - (2 * float_Pi);
                 }
                 
                 float tap = 1 + delay + depthCopy * modfreq;
@@ -207,7 +201,7 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
                 }
                 
                 w++;
-                if (w == bufferLength)
+                if (w >= bufferLength)
                     w =  0;
                 
                 channelData[i] = dry*channelData[i] + wet*sample;
@@ -244,8 +238,8 @@ void VibratoAudioProcessor::setStateInformation (const void* data, int sizeInByt
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
     *rate = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
-    *depth = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
-    *mix = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
+    //*depth = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
+    //*mix = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
          
 }
 

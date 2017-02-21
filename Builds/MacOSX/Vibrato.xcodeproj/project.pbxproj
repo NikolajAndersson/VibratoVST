@@ -55,14 +55,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CAA726FE1E5A0458008CB529 /* PBXContainerItemProxy */ = {
+		CAA18B471E5C577D00139619 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5942BCF034C0CB5E240AB61B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F707E4DC4BDFA8BB1EDC6E90;
 			remoteInfo = "Vibrato (Shared Code)";
 		};
-		CAA726FF1E5A0459008CB529 /* PBXContainerItemProxy */ = {
+		CAA18B481E5C577E00139619 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5942BCF034C0CB5E240AB61B /* Project object */;
 			proxyType = 1;
@@ -3793,12 +3793,12 @@
 		4C1179CFE03F87CFDBD44C4E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F707E4DC4BDFA8BB1EDC6E90 /* Vibrato (Shared Code) */;
-			targetProxy = CAA726FE1E5A0458008CB529 /* PBXContainerItemProxy */;
+			targetProxy = CAA18B471E5C577D00139619 /* PBXContainerItemProxy */;
 		};
 		E73C5D7575EBCC1E6BC5102E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 95A09A90039C44E2DA834E59 /* Vibrato (VST) */;
-			targetProxy = CAA726FF1E5A0459008CB529 /* PBXContainerItemProxy */;
+			targetProxy = CAA18B481E5C577E00139619 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3807,7 +3807,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -3819,9 +3818,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Vibrato;
-				SDKROOT = macosx10.10;
 				WARNING_CFLAGS = "-Wreorder";
 				ZERO_LINK = NO;
 			};
@@ -3877,7 +3874,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
@@ -3889,7 +3885,6 @@
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PRODUCT_NAME = Vibrato;
-				SDKROOT = macosx10.10;
 				WARNING_CFLAGS = "-Wreorder";
 				ZERO_LINK = NO;
 			};
@@ -3898,6 +3893,7 @@
 		8DD42E61179884568193EED9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -3931,13 +3927,14 @@
 				INFOPLIST_FILE = "Info-VST.plist";
 				INSTALL_PATH = "$(HOME)/Library/Audio/Plug-Ins/VST/";
 				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = (
 					"-bundle",
 					"-lVibrato",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.Vibrato;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 				WRAPPER_EXTENSION = vst;
 			};
@@ -3952,6 +3949,7 @@
 		A5F1D9FCA4E8853600EAF669 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -3981,9 +3979,10 @@
 					"$(inherited)",
 				);
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.Vibrato;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 			};
 			name = Debug;
