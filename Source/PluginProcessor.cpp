@@ -136,8 +136,7 @@ bool VibratoAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
 }
 #endif
 float VibratoAudioProcessor::updateAngle(float lfofreq){
-    //  phase = phase + ((2 * pi * f) / samplerate)
-        //const double cyclesPerSample = lfofreq / currentSampleRate; // [2]
+    
     deltaAngle =  2 * float_Pi * (lfofreq / currentSampleRate);
     return deltaAngle;
 }
@@ -145,12 +144,7 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
 {
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
+
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
@@ -165,48 +159,49 @@ void VibratoAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer&
     }
 
 // Still need:
-// Save old presets, Smooth out frequency slider, GUI?
+// Smooth out frequency slider, GUI?
          
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {               
-            int w = writeIndex[channel];
+            int pos = writeIndex[channel];
             float* channelData = buffer.getWritePointer (channel);
             
             for (int i = 0; i < numSamples; i++)
             {
-                vBuffer[channel][w] = channelData[i];
+                vBuffer[channel][pos] = channelData[i];
                 
                 double modfreq = sin(phase[channel]);
                 
                 phase[channel] = phase[channel] + deltaAngle;
-                if(phase[channel] > float_Pi * 2){
+                
+                if(phase[channel] > float_Pi * 2)
                     phase[channel] = phase[channel] - (2 * float_Pi);
-                }
+                
                 
                 float tap = 1 + delay + depthCopy * modfreq;
                 int n = floor(tap);
+                
                 float frac = tap - n;
                 
-                int rindex = floor(w - n);
-                if (rindex < 0){
+                int rindex = floor(pos - n);
+                
+                if (rindex < 0)
                     rindex = rindex + bufferLength;
-                }
+                
                 float sample = 0;
                 
                 if(rindex == 0){
-                    sample = vBuffer[channel][bufferLength-1]*frac + (1-frac)*vBuffer[channel][rindex];
+                    sample += vBuffer[channel][bufferLength-1]*frac + (1-frac)*vBuffer[channel][rindex];
                 }
                 else{
-                    sample = vBuffer[channel][rindex-1]*frac + (1-frac)*vBuffer[channel][rindex];
+                    sample += vBuffer[channel][rindex-1]*frac + (1-frac)*vBuffer[channel][rindex];
                 }
                 
-                w++;
-                if (w >= bufferLength)
-                    w =  0;
+                pos = (pos + 1) % bufferLength;
                 
                 channelData[i] = dry*channelData[i] + wet*sample;
             }
-            writeIndex[channel] = w;
+            writeIndex[channel] = pos;
     }
     
 }
@@ -235,12 +230,12 @@ void VibratoAudioProcessor::getStateInformation (MemoryBlock& destData)
 
 void VibratoAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-    *rate = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
-    //*depth = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
-    //*mix = MemoryInputStream(data, static_cast<size_t>(sizeInBytes), false).readFloat();
-         
+  
+    MemoryInputStream stream (data, static_cast<size_t>(sizeInBytes), false);
+    *rate = stream.readFloat();
+    *depth = stream.readFloat();
+    *mix = stream.readFloat();
+
 }
 
 //==============================================================================
