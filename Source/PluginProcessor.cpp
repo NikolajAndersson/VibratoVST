@@ -25,6 +25,13 @@ VibratoPluginAudioProcessor::VibratoPluginAudioProcessor()
                        )
 #endif
 {
+    addParameter (rate = new AudioParameterFloat ("rate", // parameterID,
+                                                  "Rate (Hz)", // parameter name
+                                                  0.0f,   // minimum value
+                                                  14.0f,   // maximum value
+                                                  1.0f));    // default value
+    addParameter (depth = new AudioParameterFloat ("depth","Depth",0.00001f,0.001f,0.0001f));
+    addParameter (mix = new AudioParameterFloat ("mix","Dry/Wet",0.0f,1.0f,0.5f));
 }
 
 VibratoPluginAudioProcessor::~VibratoPluginAudioProcessor()
@@ -134,19 +141,11 @@ void VibratoPluginAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     // this code if your algorithm always overwrites all the output channels.
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    vibrato.process(buffer);
-
+    vibrato.updateRate(*rate);
+    vibrato.updateDepth(*depth);
+    vibrato.updateMix(*mix);
     
-    /*
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        float* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }*/
+    vibrato.process(buffer);
 }
 
 //==============================================================================
@@ -166,12 +165,19 @@ void VibratoPluginAudioProcessor::getStateInformation (MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    MemoryOutputStream (destData, true).writeFloat(*rate);
+    MemoryOutputStream (destData, true).writeFloat(*depth);
+    MemoryOutputStream (destData, true).writeFloat(*mix);
 }
 
 void VibratoPluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    MemoryInputStream stream (data, static_cast<size_t>(sizeInBytes), false);
+    *rate = stream.readFloat();
+    *depth = stream.readFloat();
+    *mix = stream.readFloat();
 }
 
 //==============================================================================
