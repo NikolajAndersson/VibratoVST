@@ -8,8 +8,7 @@
   ==============================================================================
 */
 
-#ifndef PLUGINEDITOR_H_INCLUDED
-#define PLUGINEDITOR_H_INCLUDED
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
@@ -18,11 +17,11 @@
 //==============================================================================
 /**
 */
-class VibratoAudioProcessorEditor  : public AudioProcessorEditor
+class VibratoPluginAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
-    VibratoAudioProcessorEditor (VibratoAudioProcessor&);
-    ~VibratoAudioProcessorEditor();
+    VibratoPluginAudioProcessorEditor (VibratoPluginAudioProcessor&);
+    ~VibratoPluginAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -31,10 +30,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    VibratoAudioProcessor& processor;
+    VibratoPluginAudioProcessor& processor;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VibratoAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VibratoPluginAudioProcessorEditor)
 };
-
-
-#endif  // PLUGINEDITOR_H_INCLUDED

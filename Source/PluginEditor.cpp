@@ -13,7 +13,7 @@
 
 
 //==============================================================================
-VibratoAudioProcessorEditor::VibratoAudioProcessorEditor (VibratoAudioProcessor& p)
+VibratoPluginAudioProcessorEditor::VibratoPluginAudioProcessorEditor (VibratoPluginAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
     // Make sure that before the constructor has finished, you've set the
@@ -21,21 +21,22 @@ VibratoAudioProcessorEditor::VibratoAudioProcessorEditor (VibratoAudioProcessor&
     setSize (400, 300);
 }
 
-VibratoAudioProcessorEditor::~VibratoAudioProcessorEditor()
+VibratoPluginAudioProcessorEditor::~VibratoPluginAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void VibratoAudioProcessorEditor::paint (Graphics& g)
+void VibratoPluginAudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll (Colours::white);
+    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 
-    g.setColour (Colours::black);
+    g.setColour (Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Vibrato\nMade by Nikolaj Andersson", getLocalBounds(), Justification::centred, 1);
+    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
 }
 
-void VibratoAudioProcessorEditor::resized()
+void VibratoPluginAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..

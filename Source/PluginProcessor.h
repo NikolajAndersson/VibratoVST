@@ -8,8 +8,7 @@
   ==============================================================================
 */
 
-#ifndef PLUGINPROCESSOR_H_INCLUDED
-#define PLUGINPROCESSOR_H_INCLUDED
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -17,14 +16,12 @@
 //==============================================================================
 /**
 */
-class VibratoAudioProcessor  : public AudioProcessor
+class VibratoPluginAudioProcessor  : public AudioProcessor
 {
 public:
-    
-
     //==============================================================================
-    VibratoAudioProcessor();
-    ~VibratoAudioProcessor();
+    VibratoPluginAudioProcessor();
+    ~VibratoPluginAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -33,7 +30,7 @@ public:
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
-    float updateAngle(float lfofreq);
+
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
 
     //==============================================================================
@@ -59,21 +56,6 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    enum{
-        bufferLength = 192001
-    };
-    double currentSampleRate, deltaAngle, lfofreq;
-    int writeIndex[2] = {0,0};
-    float phase[2] = {0,0};
-    int sineindex = 0;
-    //double M = 0;
-    float vBuffer[2][bufferLength];
-    AudioParameterFloat* rate;
-    AudioParameterFloat* depth;
-    AudioParameterFloat* mix;
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VibratoAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VibratoPluginAudioProcessor)
 };
-
-
-#endif  // PLUGINPROCESSOR_H_INCLUDED
